@@ -1,0 +1,59 @@
+# Colors
+BLACK='\[\e[0;30m\]'
+BLUE='\[\e[0;34m\]'
+GREEN='\[\e[0;32m\]'
+CYAN='\[\e[0;36m\]'
+RED='\[\e[0;31m\]'
+PURPLE='\[\e[0;35m\]'
+BROWN='\[\e[0;33m\]'
+LIGHTGRAY='\[\e[0;37m\]'
+DARKGRAY='\[\e[1;30m\]'
+LIGHTBLUE='\[\e[1;34m\]'
+LIGHTGREEN='\[\e[1;32m\]'
+LIGHTCYAN='\[\e[1;36m\]'
+LIGHTRED='\[\e[1;31m\]'
+LIGHTPURPLE='\[\e[1;35m\]'
+YELLOW='\[\e[1;33m\]'
+WHITE='\[\e[1;37m\]'
+NC='\[\033[00m\]' #'\e[0m'              # No Color
+
+# TextMate
+alias m='mate'
+
+# Rails 
+alias sc='script/console'
+alias ss='script/server'
+alias sr='script/runner'
+alias sg='script/generate'
+alias sd='script/destroy'
+alias sp='script/plugin'
+alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
+alias mycucumber='script/cucumber --require features/steps/'
+
+# Awk
+alias first="awk '{ print \$1 }'"
+alias second="awk '{ print \$2 }'"
+alias third="awk '{ print \$3 }'"
+alias fourth="awk '{ print \$4 }'"
+alias fifth="awk '{ print \$5 }'"
+alias sixth="awk '{ print \$6 }'"
+alias seventh="awk '{ print \$7 }'"
+alias eighth="awk '{ print \$8 }'"
+alias ninth="awk '{ print \$9 }'"
+alias tenth="awk '{ print \$10 }'"
+
+# Git
+alias gitmod='git status | grep "modified:" | third'
+alias gitdel='git status | grep "deleted:"' 
+alias gits='git status'
+alias gitbr='git branch'
+alias giton='git checkout '
+alias gitsup='git svn rebase'
+alias gitlog='git log --name-status'
+alias gitundo='git rm -f --cached'
+alias gitlogst='git log --stat'
+alias cmp_origin_to_master='git log origin/master..master'
+alias cmp_master_to_origin='git log master..origin/master'
+alias cmp_head_to_master='git log HEAD..master'
+alias cmp_master_to_head='git log master..HEAD'
+
