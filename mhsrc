@@ -43,6 +43,11 @@ alias ninth="awk '{ print \$9 }'"
 alias tenth="awk '{ print \$10 }'"
 
 # Git
+function gittrack
+{
+  git checkout -b $1 origin/$1
+}
+alias gitamend='git ci --amend -C HEAD'
 alias gitmod='git status | grep "modified:" | third'
 alias gitdel='git status | grep "deleted:"' 
 alias gits='git status'
