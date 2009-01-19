@@ -47,6 +47,22 @@ function gittrack
 {
   git checkout -b $1 origin/$1
 }
+
+# usage: gitpub <branch_name>
+# ex: gitpub foo
+#
+# Pushes a local branch to the remote origin 
+# and sets up the local branch as a remote
+# tracking one with the correct remote
+# and merge settings.
+function gitpub
+{
+  git push origin $1:refs/heads/$1
+  git fetch origin
+  git config branch.$1.remote origin
+  git config branch.$1.merge refs/heads/$1
+  git checkout $1
+}
 alias gitamend='git ci --amend -C HEAD'
 alias gitmod='git status | grep "modified:" | third'
 alias gitdel='git status | grep "deleted:"' 
