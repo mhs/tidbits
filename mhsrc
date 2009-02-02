@@ -29,8 +29,20 @@ alias sd='script/destroy'
 alias sp='script/plugin'
 alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
-alias cuw='script/cucumber -pdefault'
-alias cus='script/cucumber -pselenium'
+function cuw {
+  if [ $# -eq 0 ]; then
+    script/cucumber -pdefault features/webrat
+  else
+    script/cucumber -pdefault $@
+  fi
+}
+function cus {
+  if [ $# -eq 0 ]; then
+    script/cucumber -pselenium features/selenium
+  else
+    script/cucumber -pselenium $@
+  fi
+}
 
 # Awk
 alias first="awk '{ print \$1 }'"
@@ -45,8 +57,7 @@ alias ninth="awk '{ print \$9 }'"
 alias tenth="awk '{ print \$10 }'"
 
 # Git
-function gittrack
-{
+function gittrack {
   git checkout -b $1 origin/$1
 }
 
@@ -57,8 +68,7 @@ function gittrack
 # and sets up the local branch as a remote
 # tracking one with the correct remote
 # and merge settings.
-function gitpub
-{
+function gitpub {
   git push origin $1:refs/heads/$1
   git fetch origin
   git config branch.$1.remote origin
