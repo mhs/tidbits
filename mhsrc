@@ -29,6 +29,8 @@ alias sd='script/destroy'
 alias sp='script/plugin'
 alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
+alias cuw='script/cucumber -pdefault'
+alias cus='script/cucumber -pselenium'
 
 # Awk
 alias first="awk '{ print \$1 }'"
