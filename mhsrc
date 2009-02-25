@@ -90,3 +90,11 @@ alias cmp_master_to_origin='git log master..origin/master'
 alias cmp_head_to_master='git log HEAD..master'
 alias cmp_master_to_head='git log master..HEAD'
 
+# ad is for *alias directory*. It creates persistent
+# aliases.
+function ad
+{
+  ~/.tidbits/lib/aliasdir.rb $@
+  eval `~/.tidbits/lib/aliasdir.rb --dump`
+}
+eval `~/.tidbits/lib/aliasdir.rb --dump`
