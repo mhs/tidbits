@@ -40,8 +40,9 @@ class Aliases
   FILE = Etc.getpwuid.dir + '/.aliasdir'
 
   class << self
-    def dump
-      aliases.to_a.sort_by{ |arr| arr.first }.map{|arr| "alias #{arr.first}='cd #{arr.last}'"}.join(';')
+    def dump(format)
+      delimiter = format == :shell ? ';' : "\n"
+      aliases.to_a.sort_by{ |arr| arr.first }.map{|arr| "alias #{arr.first}='cd #{arr.last}'"}.join(delimiter)
     end
     
     def [](the_alias)
@@ -63,10 +64,14 @@ class Aliases
   end
 end
 
-if ARGV.empty? || %w(-h --help).include?(ARGV.first)
+if ARGV.empty?
+  puts Aliases.dump(:pretty)
+  puts
+  puts "See #{$0} -h for more options."
+elsif %w(-h --help).include?(ARGV.first)
   print_help
 elsif ARGV.first == '--dump'
-  puts Aliases.dump
+  puts Aliases.dump(:shell)
 elsif ARGV.first == '--spec'
   at_exit{ run_spec }
 else
@@ -81,7 +86,8 @@ def run_spec
   require 'fileutils'
   require 'spec'
   Aliases.class_eval do
-    const_set :SPEC_FILE, Etc.getpwuid.dir + '/.aliasdir_spec'
+    remove_const :FILE
+    const_set :FILE, Etc.getpwuid.dir + '/.aliasdir_spec'
     at_exit { FileUtils.rm(Aliases::FILE) if File.exists?(Aliases::FILE) }
   end
 
@@ -121,7 +127,20 @@ def run_spec
     end
     
     it 'should be able to return the appropriate string of aliases for bash shell execution' do
-      Aliases.dump.should == %|alias blam='bar';alias foo='baz'|
+      Aliases.dump(:shell).should == %|alias blam='cd bar';alias foo='cd baz'|
     end
   end
+
+  describe Aliases, '#dump - dumping aliases for human readability' do
+    before(:each) do
+      FileUtils.rm(Aliases::FILE)
+      Aliases['blam'] = 'bar'
+      Aliases['foo'] = 'baz'
+    end
+    
+    it 'should be able to return the appropriate string of aliases for human readability' do
+      Aliases.dump(:pretty).should == %|alias blam='cd bar'\nalias foo='cd baz'|
+    end
+  end
+
 end
