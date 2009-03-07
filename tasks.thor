@@ -138,7 +138,6 @@ class Gen < Thor
         
           # gem install redgreen for colored test output
           begin require "redgreen" unless ENV['TM_CURRENT_LINE']; rescue LoadError; end
-            nested in 
             
           Spec::Runner.configure do |config|
             # spec config goes here
