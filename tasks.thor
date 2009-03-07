@@ -1,6 +1,8 @@
 class ::String
-  def strip_eachline
-    gsub(/(^\s*$)|(^\s*)/, '')
+  def format
+    md = self.match(/^\s+/)
+    offset = md.offset(0)[1]
+    gsub(/^.{#{offset}}/, '')
   end
 end
 
@@ -50,14 +52,14 @@ class Gen < Thor
   desc "cucumber", "Make cucumber directory structure in current directory"
   def cucumber
     project Dir.pwd do
-      file 'cucumber.yml', <<-EOS.strip_eachline
+      file 'cucumber.yml', <<-EOS.format
         default: -r features/support -r features/step_definitions
       EOS
 
       directory 'features' do
         directory 'step_definitions'
         directory 'support' do
-          file 'env.rb', <<-EOF.strip_eachline
+          file 'env.rb', <<-EOF.format
             require 'cucumber'
             require 'cucumber/formatter/unicode'
             require 'spec'
@@ -68,16 +70,76 @@ class Gen < Thor
     end
   end
   
+  desc "rakefile", "Make cookie-cutter Rakefile in current directory"
+  def rakefile
+    project Dir.pwd do
+      file "Rakefile", <<-EOT.format
+        require 'rake/rdoctask'
+        require 'spec'
+        require 'spec/rake/spectask'
+
+        desc "Run all specs in spec directory"
+        Spec::Rake::SpecTask.new do |t|
+          t.spec_opts = ['--options', "\#{File.dirname(__FILE__)}/spec/spec.opts"]
+          t.spec_files = FileList['spec/**/*_spec.rb']
+        end
+
+        desc "Run all specs in spec directory with RCov"
+        Spec::Rake::SpecTask.new(:rcov) do |t|
+          t.spec_opts = ['--options', "\#{File.dirname(__FILE__)}/spec/spec.opts"]
+          t.spec_files = FileList['spec/**/*_spec.rb']
+          t.rcov = true
+          t.rcov_opts = lambda do
+            IO.readlines(File.dirname(__FILE__) + "/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+          end
+        end
+        
+        desc "Generate RDoc"
+        task :docs => :clobber_docs do
+          system "hanna --title '#{File.basename(Dir.pwd)} API Documentation'"
+        end
+
+        desc "Run specs using jruby"
+        task "spec:jruby" do
+          result = system "jruby -S rake spec"
+          raise "JRuby tests failed" unless result
+        end
+
+        desc "Run each spec in isolation to test for dependency issues"
+        task :spec_deps do
+          Dir["spec/**/*_spec.rb"].each do |test|
+            if !system("spec \#{test} &> /dev/null")
+              puts "Dependency Issues: \#{test}"
+            end
+          end
+        end
+      
+        task :default => :spec
+      EOT
+    end
+  end
+
+  
   desc "rspec", "Make rspec directory structure in current directory"
   def rspec
     project Dir.pwd do
       directory "spec" do
-        file "spec_helper.rb", <<-EOF.strip_eachline
+        file "rcov.opts", <<-RCOVOPTS.format
+          -x gems,spec
+        RCOVOPTS
+        
+        file "spec.opts", <<-SPECOPTS.format
+          --diff
+          --color
+        SPECOPTS
+        
+        file "spec_helper.rb", <<-EOF.format
           require 'spec'
         
           # gem install redgreen for colored test output
           begin require "redgreen" unless ENV['TM_CURRENT_LINE']; rescue LoadError; end
-        
+            nested in 
+            
           Spec::Runner.configure do |config|
             # spec config goes here
           end
