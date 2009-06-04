@@ -28,6 +28,7 @@ test:
   password:
 END
 run "cp config/database.yml.example config/database.yml"
+rake "db:create:all"
 
 run "capify ."
 
