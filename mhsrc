@@ -17,6 +17,10 @@ YELLOW='\[\e[1;33m\]'
 WHITE='\[\e[1;37m\]'
 NC='\[\033[00m\]' #'\e[0m'              # No Color
 
+
+# Flush DNS Cache
+alias fcache='dscacheutil -flushcache'
+
 # TextMate
 alias m='mate'
 
