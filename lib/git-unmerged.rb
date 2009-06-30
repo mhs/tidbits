@@ -53,17 +53,31 @@ class GitBranch
 end
 
 class GitBranches < Array
-  def self.local_branches
-    `git branch`.split(/\n/).map{ |e| e.strip.gsub(/\*\s+/, '') }.reject{ |branch| branch =~ /\b#{Regexp.escape(UPSTREAM)}\b/ }.sort
+  def self.clean_branch_output(str)
+    str.split(/\n/).map{ |e| e.strip.gsub(/\*\s+/, '') }.reject{ |branch| branch =~ /\b#{Regexp.escape(UPSTREAM)}\b/ }.sort
   end
   
-  def self.load
-    branches = new
-    local_branches.each do |branch|
-      raw_commits = `git cherry -v #{UPSTREAM} #{branch}`.split(/\n/).map{ |c| GitCommit.new(c) }
-      branches << GitBranch.new(branch, raw_commits)
+  def self.local_branches
+    clean_branch_output `git branch`
+  end
+  
+  def self.remote_branches
+    clean_branch_output `git branch -r`
+  end
+  
+  def self.load(options)
+    git_branches = new
+    branches = if options[:local]
+      local_branches
+    elsif options[:remote]
+      remote_branches
     end
-    branches
+    
+    branches.each do |branch|
+      raw_commits = `git cherry -v #{UPSTREAM} #{branch}`.split(/\n/).map{ |c| GitCommit.new(c) }
+      git_branches << GitBranch.new(branch, raw_commits)
+    end
+    git_branches
   end
   
   def unmerged
@@ -82,7 +96,7 @@ class GitUnmerged
   end
   
   def load
-    @branches ||= GitBranches.load 
+    @branches ||= GitBranches.load(:local => local?, :remote => remote?)
   end
   
   def print_overview
@@ -97,7 +111,7 @@ class GitUnmerged
   
   def print_help
     puts <<-EOT.gsub(/^\s+\|/, '')
-      |Usage: #{$0} [<upstream_branch>|--help|-h]
+      |Usage: #{$0} [-a] [--upstream <branch>] [--remote]
       |
       |This script relies on the "git cherry" command. It reports the commits from all local
       |branches which have not been merged into an upstream branch. 
@@ -116,6 +130,9 @@ class GitUnmerged
       |EXAMPLE: use a different upstream than master
       |  #{$0} --upstream otherbranch
       |
+      |EXAMPLE: compare remote branches against origin/master
+      |  #{$0} --remote
+      |
       |Author: Zach Dennis <zdennis@mutuallyhuman.com>
     EOT
     exit
@@ -123,7 +140,7 @@ class GitUnmerged
     
   def print_specifics
     load
-    puts "Here's a breakdown of the commits for each branch. There is a legend at the very bottom of the output"
+    puts "Here's a breakdown of the commits for each branch. There is a legend at the very bottom of the output."
     branches.each do |branch|
       puts
       print "#{branch.name}:"
@@ -152,18 +169,32 @@ class GitUnmerged
   def show_equivalent_commits? ; @options[:show_equivalent_commits] ; end
 
   def upstream
-    @options[:upstream] || "master"
+    if @options[:upstream]
+      @options[:upstream]
+    elsif local?
+      "master"
+    elsif remote?
+      "origin/master"
+    end
   end
   
   private
   
   def extract_options_from_args(args)
+    if args.include?("--remote")
+      @options[:remote] = true
+    else
+      @options[:local] = true
+    end
     @options[:show_help] = true if args.include?("-h") || args.include?("--help")
     @options[:show_equivalent_commits] = true if args.include?("-a")
     if index=args.index("--upstream")
       @options[:upstream] = args[index+1]
     end
   end
+  
+  def local? ; @options[:local] ; end
+  def remote? ; @options[:remote] ; end
 end
 
 
