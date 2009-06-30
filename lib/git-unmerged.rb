@@ -10,8 +10,6 @@ require 'rubygems'
 gem 'term-ansicolor', '=1.0.3'
 require 'term/ansicolor'
 
-UPSTREAM = "master"
-
 class GitCommit
   attr_reader :content
   
