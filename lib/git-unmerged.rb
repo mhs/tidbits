@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-=begin
-This script relies on the "git cherry" command. It reports the commits from all local
-branches which have not been merged into an upstream branch. Yellow
-=end
-
 require 'rubygems'
 
 gem 'term-ansicolor', '=1.0.3'
@@ -83,6 +78,10 @@ class GitBranches < Array
   def unmerged
     reject{ |branch| branch.commits.empty? }.sort_by{ |branch| branch.name }
   end
+  
+  def any_missing_commits?
+    select{ |branch| branch.commits.any? }.any?
+  end
 end
 
 class GitUnmerged
@@ -101,11 +100,13 @@ class GitUnmerged
   
   def print_overview
     load
-    puts "The following branches possibly have commits not merged to #{UPSTREAM}:"
-    branches.unmerged.each do |branch|
-      num_unmerged = yellow(branch.unmerged_commits.size.to_s)
-      num_equivalent = green(branch.equivalent_commits.size.to_s)
-      puts %|  #{branch.name} (#{num_unmerged}/#{num_equivalent} commits)|
+    if branches.any_missing_commits?
+      puts "The following branches possibly have commits not merged to #{upstream}:"
+      branches.unmerged.each do |branch|
+        num_unmerged = yellow(branch.unmerged_commits.size.to_s)
+        num_equivalent = green(branch.equivalent_commits.size.to_s)
+        puts %|  #{branch.name} (#{num_unmerged}/#{num_equivalent} commits)|
+      end
     end
   end
   
@@ -138,9 +139,23 @@ class GitUnmerged
     exit
   end
     
+  def branch_description
+    local? ? "local" : "remote"
+  end
+  
   def print_specifics
     load
-    puts "Here's a breakdown of the commits for each branch. There is a legend at the very bottom of the output."
+    if branches.any_missing_commits?
+      print_legend
+      puts
+      print_breakdown
+    else
+      puts "There are no #{branch_description} branches out of sync with #{upstream}"
+    end
+  end
+  
+  def print_breakdown
+    puts "Here's a breakdown of the commits for each branch."
     branches.each do |branch|
       puts
       print "#{branch.name}:"
@@ -150,7 +165,7 @@ class GitUnmerged
         puts
       end
       branch.unmerged_commits.each { |commit| puts yellow(commit.to_s) }
-  
+
       if show_equivalent_commits?
         branch.equivalent_commits.each do |commit|
           puts green(commit.to_s)
@@ -207,6 +222,4 @@ else
   unmerged.print_overview
   puts
   unmerged.print_specifics
-  puts
-  unmerged.print_legend
 end
