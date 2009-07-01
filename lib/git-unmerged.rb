@@ -104,7 +104,7 @@ class GitUnmerged
     load
     if branches.any_missing_commits?
       puts "The following branches possibly have commits not merged to #{upstream}:"
-      branches.unmerged.each do |branch|
+      branches.each do |branch|
         num_unmerged = yellow(branch.unmerged_commits.size.to_s)
         num_equivalent = green(branch.equivalent_commits.size.to_s)
         puts %|  #{branch.name} (#{num_unmerged}/#{num_equivalent} commits)|
