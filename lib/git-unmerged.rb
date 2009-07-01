@@ -141,6 +141,13 @@ class GitUnmerged
       |EXAMPLE: compare remote branches against origin/master
       |  #{$0} --remote
       |
+      |GITCONFIG:
+      |  If you name this file git-unmerged and place it somewhere in your PATH
+      |  you will be able to type "git unmerged" to use it. If you'd like to name
+      |  it something else and still refer to it with "git unmerged" then you'll
+      |  need to set up an alias:
+      |      git config --global alias.unmerged \\!#{$0}
+      |
       |Version: #{VERSION}
       |Author: Zach Dennis <zdennis@mutuallyhuman.com>
     EOT
