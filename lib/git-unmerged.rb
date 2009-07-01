@@ -146,8 +146,6 @@ class GitUnmerged
   def print_specifics
     load
     if branches.any_missing_commits?
-      print_legend
-      puts
       print_breakdown
     else
       puts "There are no #{branch_description} branches out of sync with #{upstream}"
@@ -155,7 +153,9 @@ class GitUnmerged
   end
   
   def print_breakdown
-    puts "Here's a breakdown of the commits for each branch."
+    puts "Below is a breakdown for each branch. Here's a legend:"
+    puts
+    print_legend
     branches.each do |branch|
       puts
       print "#{branch.name}:"
@@ -176,8 +176,8 @@ class GitUnmerged
   
   def print_legend
     load
-    puts "" + yellow("yellow") + " commits have not been merged"
-    puts "" + green("green") + " commits have equivalent changes in #{UPSTREAM} but different SHAs" if show_equivalent_commits?
+    puts "  " + yellow("yellow") + " commits have not been merged"
+    puts "  " + green("green") + " commits have equivalent changes in #{UPSTREAM} but different SHAs" if show_equivalent_commits?
   end
   
   def show_help? ; @options[:show_help] ; end
