@@ -116,7 +116,7 @@ class GitUnmerged
     puts <<-EOT.gsub(/^\s+\|/, '')
       |Usage: #{$0} [-a] [--upstream <branch>] [--remote]
       |
-      |This script relies on the "git cherry" command. It reports the commits from all local
+      |This script wraps the "git cherry" command. It reports the commits from all local
       |branches which have not been merged into an upstream branch. 
       |
       |  #{yellow("yellow")} commits have not been merged
@@ -124,6 +124,11 @@ class GitUnmerged
       |
       |The default upstream is 'master'. 
       |
+      |OPTIONS:
+      |  -a   display all unmerged commits (verbose)
+      |  --remote   compare remote branches instead of local branches
+      |  --upstream <branch>   specify a specific upstream branch
+      | 
       |EXAMPLE: check for all unmerged commits
       |  #{$0}
       |
@@ -140,6 +145,10 @@ class GitUnmerged
       |Author: Zach Dennis <zdennis@mutuallyhuman.com>
     EOT
     exit
+  end
+  
+  def print_version
+    puts "#{VERSION}"
   end
     
   def branch_description
@@ -185,6 +194,7 @@ class GitUnmerged
   
   def show_help? ; @options[:show_help] ; end
   def show_equivalent_commits? ; @options[:show_equivalent_commits] ; end
+  def show_version? ; @options[:show_version] ; end
 
   def upstream
     if @options[:upstream]
@@ -206,6 +216,7 @@ class GitUnmerged
     end
     @options[:show_help] = true if args.include?("-h") || args.include?("--help")
     @options[:show_equivalent_commits] = true if args.include?("-a")
+    @options[:show_version] = true if args.include?("-v") || args.include?("--version")
     if index=args.index("--upstream")
       @options[:upstream] = args[index+1]
     end
@@ -220,6 +231,9 @@ unmerged = GitUnmerged.new ARGV
 UPSTREAM = unmerged.upstream
 if unmerged.show_help?
   unmerged.print_help
+  exit
+elsif unmerged.show_version?
+  unmerged.print_version
   exit
 else
   unmerged.print_overview
