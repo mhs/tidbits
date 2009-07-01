@@ -85,6 +85,8 @@ class GitBranches < Array
 end
 
 class GitUnmerged
+  VERSION = "1.0"
+  
   include Term::ANSIColor
   
   attr_reader :branches
@@ -134,6 +136,7 @@ class GitUnmerged
       |EXAMPLE: compare remote branches against origin/master
       |  #{$0} --remote
       |
+      |Version: #{VERSION}
       |Author: Zach Dennis <zdennis@mutuallyhuman.com>
     EOT
     exit
