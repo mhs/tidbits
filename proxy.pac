@@ -18,5 +18,8 @@ function FindProxyForURL(url, host) {
   if (shExpMatch(url,"*.local/*")) {
     return "PROXY localhost";
   }
+  if (shExpMatch(url,"*.local:*/*")) {
+    return "PROXY localhost";
+  }
   return "DIRECT";
 }
