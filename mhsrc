@@ -31,6 +31,7 @@ alias sr='script/runner'
 alias sg='script/generate'
 alias sd='script/destroy'
 alias sp='script/plugin'
+alias r='touch tmp/restart.txt'
 alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
 function cuw {
