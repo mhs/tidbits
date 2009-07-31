@@ -36,9 +36,9 @@ alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:te
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
 function cuw {
   if [ $# -eq 0 ]; then
-    script/cucumber -pdefault features/webrat
+    script/cucumber -p default features/webrat
   else
-    script/cucumber -pdefault $@
+    script/cucumber -p default $@
   fi
 }
 function cus {
