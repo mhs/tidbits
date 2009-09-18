@@ -76,7 +76,8 @@ elsif ARGV.first == '--spec'
   at_exit{ run_spec }
 else
   the_alias = ARGV.shift
-  target = ARGV.shift || Dir.pwd
+  # Use shell expansion because Dir.pwd doesn't work with symlinks properly
+  target = ARGV.shift || `pwd`.chomp
   Aliases[the_alias] = target
 end
 
