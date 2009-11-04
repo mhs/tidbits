@@ -27,6 +27,7 @@ alias m='mate'
 # Rails 
 alias sc='script/console'
 alias ss='script/server'
+alias ssd='script/server --debugger'
 alias sr='script/runner'
 alias sg='script/generate'
 alias sd='script/destroy'

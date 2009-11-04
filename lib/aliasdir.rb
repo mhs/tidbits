@@ -76,7 +76,8 @@ elsif ARGV.first == '--spec'
   at_exit{ run_spec }
 else
   the_alias = ARGV.shift
-  target = ARGV.shift || Dir.pwd
+  # Use shell expansion because Dir.pwd doesn't work with symlinks properly
+  target = ARGV.shift || `pwd`.chomp
   Aliases[the_alias] = target
 end
 
@@ -85,6 +86,8 @@ def run_spec
   require 'rubygems'
   require 'fileutils'
   require 'spec'
+  require 'spec/autorun'
+  
   Aliases.class_eval do
     remove_const :FILE
     const_set :FILE, Etc.getpwuid.dir + '/.aliasdir_spec'
@@ -96,7 +99,7 @@ def run_spec
       Aliases['test'] = '/the/test/directory'
       YAML.load(IO.read(Aliases::FILE))['test'].should == '/the/test/directory'
     end
-
+    
     it 'should be able to overwrite an alias with a new directory in the Aliases::FILE' do
       Aliases['test'] = '/the/test/directory'
       Aliases['test'] = '/a/new/cool/place'
