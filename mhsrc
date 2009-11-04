@@ -103,3 +103,16 @@ function ad
   eval `~/.tidbits/lib/aliasdir.rb --dump`
 }
 eval `~/.tidbits/lib/aliasdir.rb --dump`
+
+# FF 3.5.x doesn't play nice with SQLite3 on Mac OS X 10.6, a.k.a., Snow Leopard.
+# Replace the FF 3.5.x libsqlite3.dylib with the system one.
+#
+# NOTE: you must do this after ever FF 3.5.x update.
+#
+# See:
+# http://support.mozilla.com/tiki-view_forum_thread.php?locale=it&forumId=1&comments_parentId=449775
+function ff35_sqlite3
+{
+  mv /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib.orig
+  cp /usr/lib/libsqlite3.dylib /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib
+}
