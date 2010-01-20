@@ -1,0 +1,43 @@
+#!/bin/bash
+
+cd ~/
+
+RC_FILE=".profile"
+INSTALL_DIR=".tidbits"
+
+
+if [ -d $INSTALL_DIR ] ; then
+  echo "tidbits is already checked out at $INSTALL_DIR"
+else
+  echo "No tidbits found, cloning fresh."
+  echo "git clone http://github.com/mhs/tidbits.git $INSTALL_DIR"
+  git clone http://github.com/mhs/tidbits.git $INSTALL_DIR
+fi
+
+ad -h
+if [ $? != 0 ] ; then
+  echo ""
+  echo "Didn't find ad, appending it to $RC_FILE"
+  cat <<EOT >> $RC_FILE
+#
+# ad is for *alias directory*. It creates persistent
+# aliases. Type 'ad -h' for help.
+function ad
+{
+  ~/.tidbits/lib/aliasdir.rb $@
+  eval `~/.tidbits/lib/aliasdir.rb --dump`
+}
+eval `~/.tidbits/lib/aliasdir.rb --dump`
+EOT
+fi
+
+echo "sourcing $RC_FILE"
+source $RC_FILE
+echo "Installation complete! You should be ready to use ad. Example:"
+echo "  cd /some/dir"
+echo ""
+echo "# alias the directory with any name you want"
+echo "  ad mysupercooldir"
+echo ""
+echo "# now use your alias to navigate there"
+echo "  mysupercooldir"
