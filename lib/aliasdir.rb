@@ -50,7 +50,7 @@ class Aliases
     end
   
     def []=(the_alias, target)
-      contents = aliases.merge(the_alias => target).to_yaml
+      contents = aliases.merge(the_alias => target.gsub(/([\s\!\?])/, '\\\\\1')).to_yaml
       File.open(FILE, 'w') do |file|
         file.write contents
       end
@@ -113,6 +113,22 @@ def run_spec
       aliases['test1'].should == '1'
       aliases['test2'].should == '2'
     end
+    
+    it 'should be able to store directory aliases with spaces escaped' do
+      Aliases['test'] = '/the/test directory'
+      YAML.load(IO.read(Aliases::FILE))['test'].should == '/the/test\ directory'
+    end
+
+    it 'should be able to store directory aliases with exclamation points escaped' do
+      Aliases['test'] = '/the/test!directory'
+      YAML.load(IO.read(Aliases::FILE))['test'].should == '/the/test\!directory'
+    end
+
+    it 'should be able to store directory aliases with question marks escaped' do
+      Aliases['test'] = '/the/test?directory'
+      YAML.load(IO.read(Aliases::FILE))['test'].should == '/the/test\?directory'
+    end
+
   end
   
   describe Aliases, '#[] - reading an an alias' do
