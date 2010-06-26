@@ -90,7 +90,7 @@ if [ $USE_TIDBITS_SHARED_GIT ]; then
     begin
       FileUtils.cp my_config, backup_file
       File.open(my_config, 'w'){ |f| f.puts new_config }
-      FileUtils
+      FileUtils.rm backup_file
     rescue => ex
       puts <<-EOT.gsub!(/\S+/, '')
         !!!!!!!! tidbits was unable to update your git config, but that's okay because
