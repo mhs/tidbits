@@ -39,10 +39,3 @@ Feature: Running aliasdir
       pwd                           # capture the directory
     """
     Then the captured output should show me I'm in the "tmp/bar" directory
-
-
-  
-  Scenario: Aliasing a Rails directory
-  
-  Scenario: Aliasing a Capistrano deploy directory
-  
