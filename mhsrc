@@ -62,7 +62,50 @@ alias eighth="awk '{ print \$8 }'"
 alias ninth="awk '{ print \$9 }'"
 alias tenth="awk '{ print \$10 }'"
 
-# Git
+###############################################################
+# Git Configs and Helper Functions
+###############################################################
+
+# == Shared Git Config 
+# Set USE_TIDBITS_SHARED_GIT to any value to use it. This is so folks can opt out by default
+if [ $USE_TIDBITS_SHARED_GIT ]; then
+  /usr/bin/env ruby <<RUBY
+    require 'fileutils'
+    my_config = File.join(ENV["HOME"], ".gitconfig")
+    backup_file = "#{my_config}.tidbits.bak"
+    mhs_config = File.join(ENV["HOME"], ".tidbits/gitconfig")
+    return unless File.exists?(mhs_config)
+  
+    config = IO.read my_config
+  
+    shared_config = IO.read mhs_config
+    rgx = /^# -- START TIDBITS --.* -- END TIDBITS --$/mi
+    if config !~ rgx
+      new_config = "\nTIDBITSREPLACE\n\n" << config
+    else
+      new_config = config.gsub(rgx, 'TIDBITSREPLACE') 
+    end
+    str = ['# -- START TIDBITS --', shared_config, '# -- END TIDBITS --'].join("\n")
+    new_config.sub! /TIDBITSREPLACE/, str
+    begin
+      FileUtils.cp my_config, backup_file
+      File.open(my_config, 'w'){ |f| f.puts new_config }
+      FileUtils
+    rescue => ex
+      puts <<-EOT.gsub!(/\S+/, '')
+        !!!!!!!! tidbits was unable to update your git config, but that's okay because
+        your original git config was backed up in case. The backup file was saved to
+        #{backup_file}. You will need to manually restore it if your #{my_config}
+        is out of whack.
+      
+        Here's more information on what may have happened:
+        Exception: #{ex.to_s}
+        Backtrace: #{ex.backtrace.join("\n")}
+      EOT
+    end
+RUBY
+fi
+
 function gittrack {
   git checkout -b $1 origin/$1
 }

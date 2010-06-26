@@ -1,0 +1,58 @@
+############################################################
+# SHARED GIT CONFIGURATION
+############################################################
+# This is a shared git-config file. It should be inserted at the top of your
+# ~/.gitconfig file which allows you to override settings by placing them farther
+# down in the file.
+#
+##############################
+# POTENTIAL CONFLICTS WITH GIT
+##############################
+# git-config commands like add/remove are not smart enough to add/remove settings
+# from the proper place in your ~/gitconfig file when using shared configs. You may 
+# need to add/remove them manually. If you store your ~/.gitconfig file in a git repository
+# itself then it will be extremely easy to see if unexpected changes occurred. For more
+# information on how-to do that contact your local git ninja.
+
+[color]
+  color = auto
+  branch = auto
+  diff = auto
+  status = auto
+[core]
+  editor = emacs
+[alias]
+  br = branch
+  st = status
+  ci = commit
+  pick = cherry-pick
+  
+  # +head+ shows the latest commit for the current branch
+  head = log -n1
+  
+  # +del+ will have run "git rm" on any files you deleted so git knows to delete them to
+  del = !"git status | grep deleted | cut -d' ' -f 5 | xargs git rm 2> /dev/null"
+
+  # +cbranch+ returns the current branch you are on
+  cbranch = !"git branch | grep '*' | cut -f2 -d' '"
+  
+  # +rbranch+ returns the remote branch for the current branch you are on assuming it
+  # is named the same
+  rbranch = !"git branch -r | grep -E \"/`git cbranch`$\" | grep -v -e \"->\""
+  
+  # +review+ shows changes in the remote branch that your current local branch does not have
+  review = !"git log `git cbranch`..`git rbranch`"
+  
+  # +rreview+ shows changes in your local branch that its remote branch does not have
+  rreview = !"git log `git rbranch`..`git cbranch`"
+
+[push]
+  # default to tracking so git will only try to push the current branch
+  # otherwise git push will push all branches which can be problematic if you have
+  # changes in a branch that were not ready to be pushed (or if you use -f to force a push
+  # will overwrite remote branches when you only wanted to force-push the current branch)
+  default = tracking
+
+############################################################
+# END SHARED GIT CONFIGURATION
+############################################################
