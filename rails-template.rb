@@ -44,7 +44,8 @@ rake "rails:freeze:gems"
 
 generate "rspec"
 generate "cucumber"
-generate "mhs_deployment"
+# the -f is so that the generator overwrites config/deploy.rb
+generate "mhs_deployment", "-f"
 
 repository = ask("What repository will this be deployed from?")
 server = ask("What host will this be deployed to?")
