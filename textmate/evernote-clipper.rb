@@ -55,15 +55,24 @@ module Evernote
     end
     
     def as_html_from_textile!
-      require 'rubygems'
-      require 'redcloth'
-      create_note :html => RedCloth.new(text).to_html
+      begin
+        require 'rubygems'
+        require 'redcloth'
+        raise "foo"
+        create_note :html => RedCloth.new(text).to_html
+      rescue
+        as_text!
+      end
     end
     
     def as_html_from_markdown!
-      require 'rubygems'
-      require 'bluecloth'
-      create_note :html => BlueCloth.new(text).to_html
+      begin
+        require 'rubygems'
+        require 'bluecloth'
+        create_note :html => BlueCloth.new(text).to_html
+      rescue
+        as_text!
+      end
     end
     
     private
