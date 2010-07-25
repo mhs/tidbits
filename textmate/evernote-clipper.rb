@@ -80,7 +80,6 @@ module Evernote
     def how_many_notes_exist?(title)
       cmd = %{osascript -e 'tell application "Evernote" to find notes "intitle:#{title} notebook:#{notebook}"'}
       results = `#{cmd}`
-      puts results
       results.split(/,/).size
     end
 
@@ -103,7 +102,7 @@ def ask(question, options={})
   BASH
   answer = `#{cmd}`.to_s
 end
-puts ENV.inspect
+
 title = ask("What is the title of this note?", :title => "Evernote Note").chomp
 notebook = ask("What notebook would you like to place this note in?")
 # When no notebook is supplied Evernote returns "1\n"
