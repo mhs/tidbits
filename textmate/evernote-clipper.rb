@@ -1,17 +1,34 @@
 #!/usr/bin/env ruby
 
-# This file can be installed as a TextMate command to make the selected text an Evernote
-# note. It supports textile, markdown, and text. If you make a textile or markdown
-# document an evernote note, it will convert the text to HTML using RedCloth or BlueCloth.
+# == TextMate Evernote Clipper 
 #
-# == Dependencies
-# * RedCloth if you want textile support
-# * BlueCloth if you want markdown support
-# * CocoaDialog (this should be shipped with your TextMate distribution)
+# This file is a Evernote clipper for TextMate. It allows you to create a note in Evernote
+# based on the currently selected text in TextMate. 
 #
-# == Installing in TextMate
-# I set it up as the following in TextMate's bundle editor, feel free to tweak
-# or change:
+# This supports textile, markdown, and plain text clippings.
+#
+# === Textile Clippings 
+# 
+# If you clip text from a textile document in TextMate (denoted by the TextMate mode Textile)
+# then the selected text will be ran through a textile preprocesser and inserted as a note
+# in Evernote as an HTML document. This relies on the RedCloth ruby library being installed.
+#
+# === Markdown Clippings
+#
+# If you clip text from a markdown document in TextMate (denoted by the TextMate mode 
+# Markdown) then the selected text will be ran through a textile preprocesser and inserted as
+# a note in Evernote as an HTML document. This relies on the BlueCloth ruby library being 
+# installed.
+#
+# === Plain Text Clippings
+#
+# The fallback clipping mechanism is to treat the selected text as plain text. This will
+# work for any TextMate mode. 
+#
+# === Installation in TextMate
+#
+# This is how I set it up in TextMate using it's BundleEditor. Feel free to tweak or change
+# to suit your needs:
 #  Command name: evernote-clipper
 #  Save: Nothing
 #  Command(s): The contents of this file
@@ -23,8 +40,10 @@
 # If the above doesn't work for you then try to change the Output to something besides
 # Discard to debug.
 #
-# == Author
+# === Author
+#
 # * Zach Dennis (zdennis@mutuallyhuman.com, zach.dennis@gmail.com)
+#
 module Evernote
   class Clipper
     def initialize(options={})
