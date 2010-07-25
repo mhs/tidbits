@@ -108,7 +108,7 @@ module Evernote
       results = `#{cmd}`.chomp
       return 0 if results =~ /^\s*$/
       return 1 if !results.include?(",")
-      results.scan(/,/).size
+      results.scan(/,/).size + 1
     end
 
   end
