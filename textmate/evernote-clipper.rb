@@ -66,21 +66,22 @@ module Evernote
       system cmd
     end
     
-    def text ; @options[:text] ; end
-    def tags ; @options[:tags] ; end
-    def title
-      @title ||= (
-        _title = @options[:title] 
-        count = how_many_notes_exist?(_title)
-        _title = "#{_title} ##{count+1}" if count > 0
-        _title)
-    end
     def notebook ; @options[:notebook]; end
+    def tags ; @options[:tags] ; end
+    def text ; @options[:text] ; end
+    def title
+      _title = @options[:title] 
+      count = how_many_notes_exist?(_title)
+      _title = "#{_title} ##{count+1}" if count > 0
+      _title
+    end
     
     def how_many_notes_exist?(title)
       cmd = %{osascript -e 'tell application "Evernote" to find notes "intitle:#{title} notebook:#{notebook}"'}
-      results = `#{cmd}`
-      results.split(/,/).size
+      results = `#{cmd}`.chomp
+      return 0 if results =~ /^\s*$/
+      return 1 if !results.include?(",")
+      results.scan(/,/).size
     end
 
   end
@@ -92,7 +93,7 @@ def ask(question, options={})
   cancel_text = options[:cancel_text] || "Cancel"
   cmd =<<-BASH
     res=$(#{ENV["TM_APP_PATH"]}/Contents/SharedSupport/Support/bin/CocoaDialog.app/Contents/MacOS/CocoaDialog inputbox --title "#{title}" \
-        --informative-text "#{question}:" \
+        --informative-text "#{question}:" --string-output\
         --button1 "#{ok_text}" --button2 "#{cancel_text}")
 
     [[ $(head -n1 <<<"$res") == "2" ]] && exit_discard
@@ -103,15 +104,35 @@ def ask(question, options={})
   answer = `#{cmd}`.to_s
 end
 
-title = ask("What is the title of this note?", :title => "Evernote Note").chomp
-notebook = ask("What notebook would you like to place this note in?")
-# When no notebook is supplied Evernote returns "1\n"
-notebook = "Unfiled" if notebook.empty? || notebook =~ /^1/
+def cancel?(str)
+  ["2", "Cancel"].include?(str.chomp)
+end
+
+def okay?(str)
+  ["1", "Okay"].include?(str.chomp)
+end
+
+
+title = ""
+loop do
+  answer = ask("What is the title of this note? (required)", :title => "Evernote Note").chomp
+  exit if cancel?(answer)
+  if !answer.empty? && !okay?(answer)
+    title = answer
+    break
+  end
+end
+
+
+notebook = ask("What notebook would you like to place this note in? (Unfiled by default)")
+exit if cancel?(notebook)
+notebook = "Unfiled" if okay?(notebook)
+
 clip = Evernote::Clipper.new(
   :text => ENV["TM_SELECTED_TEXT"],
   :title => title,
-  # :tags => ask("Tags for this note (comma-separated)?", :title => "Evernote Note"),
   :notebook => notebook
+  # :tags => ask("Tags for this note (comma-separated)?", :title => "Evernote Note")
 )
 
 case ENV["TM_MODE"]
