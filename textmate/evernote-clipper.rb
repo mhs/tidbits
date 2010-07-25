@@ -78,7 +78,6 @@ module Evernote
     private
     
     def create_note(options={})
-      require 'tempfile'
       if content=options[:text]
         create_how = "from file"
         filepath =  "/tmp/evernote-clipping.txt"
