@@ -8,7 +8,8 @@ end
 
 module ProjectTemplateMethods
   include FileUtils
-  
+
+  # Makes a directory unless it already exists
   def directory(dir, &block)
     if File.directory?(dir)
       log dir, "(already exists)"
@@ -19,6 +20,7 @@ module ProjectTemplateMethods
     Dir.chdir(dir, &block) if block_given?
   end
   
+  # Makes a file with the following content unless the file already exists
   def file(file, contents)
     if File.exists?(file)
       log file, "(already exists)"
@@ -143,6 +145,42 @@ class Gen < Thor
             # spec config goes here
           end
         EOF
+      end
+    end
+  end
+  
+  desc "databaseyml", "Make Rails database.yml file"
+  def databaseyml
+    dbname = File.basename(Dir.pwd).gsub(/\W+/, '_')
+    project Dir.pwd do
+      directory "config" do
+        file "database.yml", <<-CONFIG.gsub(/^\s*\|/, '')
+          |development: &DEVELOPMENT
+          |  adapter: mysql
+          |  encoding: utf8
+          |  reconnect: false
+          |  database: #{dbname}_development
+          |  pool: 5
+          |  username: root
+          |  password:
+          |  host: localhost
+          |
+          |test: &TEST
+          |  <<: *DEVELOPMENT
+          |  database: #{dbname}_test
+          |
+          |selenium:
+          |  <<: *TEST
+          |  database: #{dbname}_test
+          |
+          |cucumber:
+          |  <<: *TEST
+          |  database: #{dbname}_test
+          |
+          |production:
+          |  <<: *DEVELOPMENT
+          |  database: #{dbname}_production
+        CONFIG
       end
     end
   end
