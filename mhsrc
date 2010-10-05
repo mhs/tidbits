@@ -25,13 +25,57 @@ alias fcache='dscacheutil -flushcache'
 alias m='mate'
 
 # Rails 
-alias sc='script/console'
-alias ss='script/server'
-alias ssd='script/server --debugger'
-alias sr='script/runner'
-alias sg='script/generate'
-alias sd='script/destroy'
-alias sp='script/plugin'
+
+function ss {
+  if [ -e script/rails ]; then
+    script/rails server $@
+  else
+    script/server $@
+  fi
+}
+function ssd {
+  if [ -e script/rails ]; then
+    script/rails server --debugger $@
+  else
+    script/server --debugger $@
+  fi
+}
+function sc {
+  if [ -e script/rails ]; then
+    script/rails console $@
+  else
+    script/console $@
+  fi
+}
+function sg {
+  if [ -e script/rails ]; then
+    script/rails generate $@
+  else
+    script/generate $@
+  fi
+}
+function sr {
+  if [ -e script/rails ]; then
+    script/rails runner $@
+  else
+    script/runner $@
+  fi
+}
+function sd {
+  if [ -e script/rails ]; then
+    script/rails destroy $@
+  else
+    script/destroy $@
+  fi
+}
+function sp {
+  if [ -e script/rails ]; then
+    script/rails plugin $@
+  else
+    script/plugin $@
+  fi
+}
+  
 alias r='touch tmp/restart.txt'
 alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
