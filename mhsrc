@@ -147,8 +147,17 @@ function topic_branch {
   echo $TOPIC_BRANCH
 }
 
+function gitaccept {
+  TOPIC_BRANCH=$(topic_branch $1)
+  git checkout master
+  git merge --no-ff $TOPIC_BRANCH
+  git push origin :$TOPIC_BRANCH
+  echo It\'s now safe to delete this branch.
+  echo "    git branch -D $TOPIC_BRANCH"
+}
+
 function gitstage {
-  TOPIC_BRANCH=$(topic_branch)
+  TOPIC_BRANCH=$(topic_branch $1)
   gitpub $TOPIC_BRANCH
   git checkout acceptance
   git merge --no-ff $TOPIC_BRANCH
