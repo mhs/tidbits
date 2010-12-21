@@ -113,6 +113,10 @@ alias tenth="awk '{ print \$10 }'"
 # == Shared Git Config
 # To get the latest shared .gitconfig run:
 #    ~/.tidbits/bin/tidbits_update_gitconfig
+
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
  
 function gittrack {
   git checkout -b $1 origin/$1
@@ -132,6 +136,24 @@ function gitpub {
   git config branch.$1.merge refs/heads/$1
   git checkout $1
 }
+
+function topic_branch {
+  echo `parse_git_branch` | grep ^[0-9]+_ -E > /dev/null
+  if [ $? == 0 ]; then
+    TOPIC_BRANCH=`parse_git_branch`
+  else
+    TOPIC_BRANCH=$1
+  fi
+  echo $TOPIC_BRANCH
+}
+
+function gitstage {
+  TOPIC_BRANCH=$(topic_branch)
+  gitpub $TOPIC_BRANCH
+  git checkout acceptance
+  git merge --no-ff $TOPIC_BRANCH
+}
+
 alias gitamend='git ci --amend -C HEAD'
 alias gitmod='git status | grep "modified:" | third'
 alias gitdel='git status | grep "deleted:"' 
