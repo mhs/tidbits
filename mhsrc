@@ -137,32 +137,6 @@ function gitpub {
   git checkout $1
 }
 
-function topic_branch {
-  echo `parse_git_branch` | grep ^[0-9]+_ -E > /dev/null
-  if [ $? == 0 ]; then
-    TOPIC_BRANCH=`parse_git_branch`
-  else
-    TOPIC_BRANCH=$1
-  fi
-  echo $TOPIC_BRANCH
-}
-
-function gitaccept {
-  TOPIC_BRANCH=$(topic_branch $1)
-  git checkout master
-  git merge --no-ff $TOPIC_BRANCH
-  git push origin :$TOPIC_BRANCH
-  echo It\'s now safe to delete this branch.
-  echo "    git branch -D $TOPIC_BRANCH"
-}
-
-function gitstage {
-  TOPIC_BRANCH=$(topic_branch $1)
-  gitpub $TOPIC_BRANCH
-  git checkout acceptance
-  git merge --no-ff $TOPIC_BRANCH
-}
-
 alias gitamend='git ci --amend -C HEAD'
 alias gitmod='git status | grep "modified:" | third'
 alias gitdel='git status | grep "deleted:"' 
@@ -199,3 +173,5 @@ function ff35_sqlite3
   mv /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib.orig
   cp /usr/lib/libsqlite3.dylib /Applications/Firefox.app/Contents/MacOS/libsqlite3.dylib
 }
+
+PATH=$PATH:$(pwd)/.tidbits/bin

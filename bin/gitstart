@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# gitstart marks a story as started in Pivotal, and creates and publishes a branch.
+# pass the name of the branch to create, starting with the pivotal story ID and an _.
+module Gitutils ; end
+Gitutils.instance_eval do
+  @topic_branch = ARGV[1]
+end
+require File.join(File.dirname(__FILE__), '../lib/gitutils.rb')
+
+thread = Thread.new do
+  Gitutils.start
+end
+
+Gitutils.create_topic_branch
+thread.join

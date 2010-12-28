@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# gitaccept merges the feature branch into master.
+# If you're in a topic branch when calling, it'll use that. Otherwise, it will use the argument passed to it.
+require File.join(File.dirname(__FILE__), '../lib/gitutils.rb')
+
+thread = Thread.new do
+  Gitutils.add_label "merged"
+end
+
+Gitutils.checkout "master"
+Gitutils.merge 
+
+puts green("After resolving any merge conflicts, push master.")
+puts green("Next: gitclose #{Gitutils.topic_branch}")
+
+thread.join

@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# gitclose unpublishes and deletes the local branch, and marks the story as accepted in Pivotal.
+# If you're in a topic branch when calling gitclose, it'll use that. Otherwise, it will use the argument passed to it.
+require File.join(File.dirname(__FILE__), '../lib/gitutils.rb')
+
+thread = Thread.new do
+  Gitutils.accept
+end
+
+Gitutils.checkout "master"
+Gitutils.destroy_topic_branch
+
+puts green("Destroyed topic branch and marked as accepted.")
+
+thread.join

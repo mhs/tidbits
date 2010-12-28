@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# gitstage updates the acceptance branch and merges the feature branch into the acceptance branch.
+# If you're in a topic branch when calling gitstage, it'll use that. Otherwise, it will use the argument passed to it.
+require File.join(File.dirname(__FILE__), '../lib/gitutils.rb')
+
+thread = Thread.new do
+  Gitutils.add_label "merged"
+end
+
+Gitutils.checkout "acceptance"
+Gitutils.merge 
+
+puts green("After resolving any merge conflicts, push acceptance and deploy.")
+
+thread.join
