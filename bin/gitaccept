@@ -8,7 +8,7 @@ thread = Thread.new do
 end
 
 Gitutils.checkout "master"
-Gitutils.merge 
+Gitutils.merge
 
 puts green("After resolving any merge conflicts, push master.")
 puts green("Next: gitclose #{Gitutils.topic_branch}")

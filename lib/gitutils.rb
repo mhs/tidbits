@@ -82,7 +82,7 @@ module Gitutils
   end
 
   def self.merge
-    repo.git.merge({}, topic_branch)
+    `git merge --no-ff #{topic_branch}`
   end
 
   def self.checkout branch
