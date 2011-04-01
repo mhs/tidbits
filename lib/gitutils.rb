@@ -5,7 +5,6 @@ def green(text); colorize(text, "\e[32m"); end
 
 require 'rubygems'
 require 'yaml'
-require 'ruby-debug'
 begin
   require 'grit'
   require 'pivotal-tracker'
@@ -90,7 +89,7 @@ module Gitutils
   end
 
   def self.destroy_topic_branch
-    repo.git.push({}, "origin :#{topic_branch}")
+    `git push origin :#{topic_branch}`
     repo.git.branch({'D' => ''}, topic_branch)
   end
 
