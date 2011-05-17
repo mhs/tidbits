@@ -49,7 +49,10 @@
   # +rollback+ performs a "git reset --soft HEAD~n" where n is a parameter you
   # pass in, ie: git rollback 1 is the same as git reset --soft HEAD~1
   rollback = !"function mhsrc_gitconfig_rollback(){ num=$1 ;git reset --soft HEAD~$num ; echo Rolled back softly $num commits ;} ; mhsrc_gitconfig_rollback "
-
+  
+  # +unmerged+ - see http://mutuallyhuman.com/blog/2009/07/02/finding-unmerged-commits-with-git-unmerged
+  unmerged = !"ruby ~/.tidbits/lib/git-unmerged.rb"
+  
 [push]
   # default to tracking so git will only try to push the current branch
   # otherwise git push will push all branches which can be problematic if you have
