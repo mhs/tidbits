@@ -53,6 +53,9 @@
   # +unmerged+ - see http://mutuallyhuman.com/blog/2009/07/02/finding-unmerged-commits-with-git-unmerged
   unmerged = !"ruby ~/.tidbits/lib/git-unmerged.rb"
   
+  # +anim+ - lists branches merged into acceptance that are not in master. (anim == acceptance not in master)
+  anim = !"echo 'Branches merged into acceptance that are not in master:' && git log master..acceptance | grep -i 'Merge branch'"
+  
 [push]
   # default to tracking so git will only try to push the current branch
   # otherwise git push will push all branches which can be problematic if you have
