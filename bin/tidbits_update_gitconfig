@@ -18,9 +18,18 @@ end
 str = ['# -- START TIDBITS --', shared_config, '# -- END TIDBITS --'].join("\n")
 new_config.sub! /TIDBITSREPLACE/, str
 begin
+  puts
+  printf "%-32s", "Backing up your gitconfig... "
   FileUtils.cp my_config, backup_file
+  puts "done"
+  printf "%-32s", "Updating gitconfig... "
   File.open(my_config, 'w'){ |f| f.puts new_config }
+  puts "done"
+  printf "%-32s", "Removing backed up gitconfig... "
   FileUtils.rm backup_file
+  puts "done"
+  puts
+  puts "Your ~/.gitconfig has been updated!"
 rescue => ex
   puts <<-EOT.gsub!(/\S+/, '')
     !!!!!!!! tidbits was unable to update your git config, but that's okay because
