@@ -130,7 +130,7 @@ function gittrack {
 # tracking one with the correct remote
 # and merge settings.
 function gitpub {
-  git push origin $1:refs/heads/$1
+  git push origin $1\:refs/heads/$1
   git fetch origin
   git config branch.$1.remote origin
   git config branch.$1.merge refs/heads/$1
