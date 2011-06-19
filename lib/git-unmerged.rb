@@ -89,8 +89,6 @@ class GitUnmerged
   
   include Term::ANSIColor
   
-  attr_reader :branches
-
   def initialize(args)
     @options = {}
     extract_options_from_args(args)
@@ -99,9 +97,20 @@ class GitUnmerged
   def load
     @branches ||= GitBranches.load(:local => local?, :remote => remote?)
   end
+
+  def branches
+    @options[:exclude].is_a?(Array) ? @branches.reject{|b| @options[:exclude].include?(b.name)} : @branches
+  end
   
   def print_overview
     load
+    if @options[:exclude] && @options[:exclude].length > 0
+      puts "The following branches have been excluded"
+      @options[:exclude].each do |branch_name|
+        puts "  #{branch_name}"
+      end
+      puts
+    end
     if branches.any_missing_commits?
       puts "The following branches possibly have commits not merged to #{upstream}:"
       branches.each do |branch|
@@ -226,6 +235,9 @@ class GitUnmerged
     @options[:show_version] = true if args.include?("-v") || args.include?("--version")
     if index=args.index("--upstream")
       @options[:upstream] = args[index+1]
+    end
+    if index=args.index("--exclude")
+      @options[:exclude] = args[index+1].split(',')
     end
   end
   
