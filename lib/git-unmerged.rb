@@ -88,6 +88,8 @@ class GitUnmerged
   VERSION = "1.0.1"
   
   include Term::ANSIColor
+
+  attr_reader :branches
   
   def initialize(args)
     @options = {}
@@ -96,10 +98,7 @@ class GitUnmerged
   
   def load
     @branches ||= GitBranches.load(:local => local?, :remote => remote?)
-  end
-
-  def branches
-    @options[:exclude].is_a?(Array) ? @branches.reject{|b| @options[:exclude].include?(b.name)} : @branches
+    @branches.reject!{|b| @options[:exclude].include?(b.name)} if @options[:exclude].is_a?(Array)
   end
   
   def print_overview
