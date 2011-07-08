@@ -136,6 +136,7 @@ class GitUnmerged
       |  -a   display all unmerged commits (verbose)
       |  --remote   compare remote branches instead of local branches
       |  --upstream <branch>   specify a specific upstream branch
+      |  --exclude <branch>[,<branch>,...]   specify a comma-separated list of branches to exclude
       | 
       |EXAMPLE: check for all unmerged commits
       |  #{$0}
