@@ -88,9 +88,9 @@ class GitUnmerged
   VERSION = "1.0.1"
   
   include Term::ANSIColor
-  
-  attr_reader :branches
 
+  attr_reader :branches
+  
   def initialize(args)
     @options = {}
     extract_options_from_args(args)
@@ -98,10 +98,18 @@ class GitUnmerged
   
   def load
     @branches ||= GitBranches.load(:local => local?, :remote => remote?)
+    @branches.reject!{|b| @options[:exclude].include?(b.name)} if @options[:exclude].is_a?(Array)
   end
   
   def print_overview
     load
+    if @options[:exclude] && @options[:exclude].length > 0
+      puts "The following branches have been excluded"
+      @options[:exclude].each do |branch_name|
+        puts "  #{branch_name}"
+      end
+      puts
+    end
     if branches.any_missing_commits?
       puts "The following branches possibly have commits not merged to #{upstream}:"
       branches.each do |branch|
@@ -128,6 +136,7 @@ class GitUnmerged
       |  -a   display all unmerged commits (verbose)
       |  --remote   compare remote branches instead of local branches
       |  --upstream <branch>   specify a specific upstream branch
+      |  --exclude <branch>[,<branch>,...]   specify a comma-separated list of branches to exclude
       | 
       |EXAMPLE: check for all unmerged commits
       |  #{$0}
@@ -226,6 +235,9 @@ class GitUnmerged
     @options[:show_version] = true if args.include?("-v") || args.include?("--version")
     if index=args.index("--upstream")
       @options[:upstream] = args[index+1]
+    end
+    if index=args.index("--exclude")
+      @options[:exclude] = args[index+1].split(',')
     end
   end
   
