@@ -37,6 +37,16 @@ class GitBranch
     @commits = commits
   end
   
+  # Returns origin from origin/some/branch/here
+  def repository
+    name.split("/", 2).first
+  end
+  
+  # Returns some/branch/here from origin/some/branch/here
+  def branch_name
+    name.split("/", 2).last
+  end
+  
   def unmerged_commits
     commits.select{ |commit| commit.unmerged? }
   end
@@ -93,6 +103,7 @@ class GitUnmerged
   
   def initialize(args)
     @options = {}
+    @branches_to_prune = []
     extract_options_from_args(args)
   end
   
@@ -173,6 +184,7 @@ class GitUnmerged
   
   def print_specifics
     load
+    
     if branches.any_missing_commits?
       print_breakdown
     else
@@ -188,7 +200,12 @@ class GitUnmerged
       puts
       print "#{branch.name}:"
       if branch.unmerged_commits.empty? && !show_equivalent_commits?
-        print "(no umerged commits, must have merged commits with different SHAs)\n" 
+        print "(no unmerged commits"
+        if prune?
+          print ",", red(" this will be pruned")
+          @branches_to_prune << branch
+        end
+        print ")\n" 
       else
         puts
       end
@@ -208,6 +225,33 @@ class GitUnmerged
     puts "  " + green("green") + " commits have equivalent changes in #{UPSTREAM} but different SHAs" if show_equivalent_commits?
   end
   
+  def prune
+    return unless prune?
+    if @branches_to_prune.empty?
+      puts "", "There are no branches to prune."
+    else
+      puts "", "Are you sure you want to prune the following branches?", ""
+      @branches_to_prune.each do |branch|
+        puts red(" #{branch.name}")
+      end
+      puts
+      print "y or n: "
+      if STDIN.gets=~/y/i
+        @branches_to_prune.each do |branch|
+          if local?
+            `git branch -D #{branch.name}` 
+          elsif remote?
+            `git push #{branch.repository} :#{branch.branch_name}`
+          end
+        end
+        puts "", "Pruned #{@branches_to_prune.size} branches."
+      else
+        puts "", "Pruning aborted. All branches were left unharmed."
+      end
+    end
+  end
+  
+  def prune? ; @options[:prune ] ; end
   def show_help? ; @options[:show_help] ; end
   def show_equivalent_commits? ; @options[:show_equivalent_commits] ; end
   def show_version? ; @options[:show_version] ; end
@@ -230,12 +274,16 @@ class GitUnmerged
     else
       @options[:local] = true
     end
+    
+    @options[:prune] = true if args.include?("--prune")
     @options[:show_help] = true if args.include?("-h") || args.include?("--help")
     @options[:show_equivalent_commits] = true if args.include?("-a")
     @options[:show_version] = true if args.include?("-v") || args.include?("--version")
+
     if index=args.index("--upstream")
       @options[:upstream] = args[index+1]
     end
+
     if index=args.index("--exclude")
       @options[:exclude] = args[index+1].split(',')
     end
@@ -258,4 +306,5 @@ else
   unmerged.print_overview
   puts
   unmerged.print_specifics
+  unmerged.prune
 end
