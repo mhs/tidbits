@@ -27,7 +27,9 @@ alias m='mate'
 # Rails 
 
 function ss {
-  if [ -e script/rails ]; then
+  if [ -e Procfile ]; then
+    foreman start
+  elif [ -e script/rails ]; then
     script/rails server $@
   else
     script/server $@
@@ -41,7 +43,9 @@ function ssd {
   fi
 }
 function sc {
-  if [ -e script/rails ]; then
+  if which pry >/dev/null; then
+    pry -r ./config/environment
+  elif [ -e script/rails ]; then
     script/rails console $@
   else
     script/console $@
