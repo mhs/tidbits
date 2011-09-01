@@ -95,7 +95,7 @@ class GitBranches < Array
 end
 
 class GitUnmerged
-  VERSION = "1.0.1"
+  VERSION = "1.1"
   
   include Term::ANSIColor
 
@@ -146,8 +146,9 @@ class GitUnmerged
       |OPTIONS:
       |  -a   display all unmerged commits (verbose)
       |  --remote   compare remote branches instead of local branches
-      |  --upstream <branch>   specify a specific upstream branch
+      |  --upstream <branch>   specify a specific upstream branch (defaults to master)
       |  --exclude <branch>[,<branch>,...]   specify a comma-separated list of branches to exclude
+      |  --prune  prompts user to delete branches which have no differences with the upstream
       | 
       |EXAMPLE: check for all unmerged commits
       |  #{$0}
