@@ -56,6 +56,9 @@
   # +anim+ - lists branches merged into acceptance that are not in master. (anim == acceptance not in master)
   anim = !"echo 'Branches merged into acceptance that are not in master:' && git log master..acceptance | grep -i 'Merge branch'"
   
+  # +pushr+ - pushes the current branch to the remote origin
+  pushr = !"git push --set-upstream origin `git cbranch`"
+  
 [push]
   # default to tracking so git will only try to push the current branch
   # otherwise git push will push all branches which can be problematic if you have
