@@ -58,6 +58,9 @@
   
   # +pushr+ - pushes the current branch to the remote origin
   pushr = !"git push --set-upstream origin `git cbranch`"
+
+  # +pre+ - shortcut for pull --rebase
+  pre = pull --rebase
   
 [push]
   # default to tracking so git will only try to push the current branch
