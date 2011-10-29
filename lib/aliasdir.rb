@@ -14,8 +14,9 @@ def print_help
     |        directory
     |
     |Examples:
-    |  aliasdir foo
-    |  aliasdir foo /some/path
+    |  Go to the alias foo:  aliasdir foo
+    |  Set the alias foo:    aliasdir foo /some/path
+    |  Remove the alias foo: aliasdir --remove foo
     |
     |Installing in your .bashrc in order to use and persist aliases
     |immediately:
