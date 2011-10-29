@@ -2,7 +2,7 @@
 
 require 'etc'
 require 'yaml'
-require File.join File.dirname(__FILE__), 'aliasdir/aliases'
+require File.expand_path(File.join File.dirname(__FILE__), 'aliasdir/aliases.rb')
 
 def print_help
   puts <<-EOT.gsub(/^\s+\|/, '')
@@ -48,6 +48,8 @@ elsif ARGV.first == '--dump'
   puts Aliases.dump(:shell)
 elsif ARGV.first == '--spec'
   at_exit{ run_spec }
+elsif ARGV.first == '--remove'
+  puts Aliases.remove(ARGV[1])
 else
   the_alias = ARGV.shift
   # Use shell expansion because Dir.pwd doesn't work with symlinks properly
