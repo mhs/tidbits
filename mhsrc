@@ -79,8 +79,12 @@ function sp {
     script/plugin $@
   fi
 }
-  
+
 alias be='bundle exec'
+alias ber='be rake'
+alias bert='ber -T'
+alias bec='be cucumber'
+
 alias r='touch tmp/restart.txt'
 alias tmig="rake db:migrate && rake db:rollback && rake db:migrate && rake db:test:prepare"
 alias mycucumber='script/cucumber --require features/support/env.rb --require features/step_definitions/ --require features/support/'
@@ -148,6 +152,7 @@ alias gitdel='git status | grep "deleted:"'
 alias gits='git status'
 alias gitbr='git branch'
 alias giton='git checkout '
+alias gitake='git checkout -b'
 alias gitsup='git svn rebase'
 alias gitlog='git log --name-status'
 alias gitundo='git rm -f --cached'
