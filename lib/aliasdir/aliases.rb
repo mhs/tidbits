@@ -21,7 +21,7 @@ class Aliases
     def remove(the_alias)
       old = aliases
       if old[the_alias]
-        sanatized_contents = File.readlines(FILE).reject { |aliaz| aliaz[/#{the_alias}/i] }  
+        sanatized_contents = File.readlines(FILE).reject { |aliaz| aliaz[/^#{the_alias}$/i] }  
         File.open(FILE, 'w') { |file|  file.write sanatized_contents.join("") }
         "Removed alias [#{the_alias}] => [#{old[the_alias]}]"
       else
