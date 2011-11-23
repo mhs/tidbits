@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+#
+# rename [pattern] [replacement] 
+#
+
+if ARGV.length == 0
+  puts "Usage: rename [-s] [pattern] [replacement]"
+  puts "rename -h for help"
+  exit
+elsif ARGV[0] =~ /-h|--help/
+  puts "Usage: rename [-s] [pattern] [replacement]"
+  puts
+  puts "rename reads a file list in from STDIN and renames"
+  puts "each file so that the [pattern] matched in the filename"
+  puts "is replaced by the [replacement]"
+  puts
+  puts "More info:" 
+  puts "  pattern - is treated as a ruby regular expression"
+  puts "  replacement - the content to replace the pattern with"
+  puts
+  puts "Options:"
+  puts "  -s,--svn performs an svn mv on the files that are renamed"  
+  puts
+  puts "Examples:"  
+  puts "   ls *.rhtml | rename rhtml .html.erb"
+  puts "   ls *.rhtml | rename -s rhtml .html.erb"
+  puts "   findfile . rhtml | rename -s rhtml .html.erb"
+  puts 
+  puts "Author: zach.dennis@gmail.com"
+  exit 1
+end
+
+svn = ARGV[0] =~ /^(-s|--svn)$/
+ARGV.shift if svn
+
+# find arguments to pass along if any
+xargs_index = ARGV.index("--")
+if xargs_index
+  args = ARGV[0...xargs_index] 
+  xargs = ARGV[xargs_index+1..-1]
+else
+  args = ARGV
+  xargs = []
+end
+
+
+STDIN.read.each do |line|
+  line.chomp!
+  new_name = line.gsub(Regexp.new(args[0]), args[1]) 
+  if svn
+    %x|svn mv #{xargs.join(" ")} "#{line}" "#{new_name}"|
+  else
+    FileUtils.mv(line, new_name)
+  end
+end

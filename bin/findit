@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+STDOUT.sync=true
+
+def print_help
+  puts <<-EOT.gsub(/^\s+\|/, '')
+   |Usage: findit start_directory pattern...
+   |
+   |findit finds all files matching the contents of pattern starting in the where 
+   |directory. It searches recursively throughout the where directory. findit is 
+   |a wrapper to find and grep.
+   |
+   |Options:
+   |  -h, --help shows this help
+   |
+   |Example:
+   |  Find all files that match the text 'abc def ghi':
+   |    findit ./ abc def ghi
+   |
+   |Ignored file/folder patterns:
+   |   #{DATA.map{ |ignored| ignored.chomp.gsub('\\', '') }.join(', ') }
+   |
+   |Notes:
+   |   findit is a wrapper to find and grep.
+   |
+   |Author: zach.dennis@gmail.com
+  EOT
+end
+
+if ARGV.size == 0
+  print_help
+  exit 1
+elsif ARGV.first =~ /^(-h|--help)$/
+  print_help
+  exit 0
+end
+
+where = ARGV.shift
+what = "'" + ARGV.join( " " ) + "'"
+ignore = DATA.readlines.map{|line| line.chomp}.join("|")
+cmd = "find #{where} -type f -exec grep -Hn #{what} {} \\; | grep -E -v \"#{ignore}\""
+
+system cmd
+
+# file patterns to ignore
+__END__
+\\.svn
+\\.log
+\\.project
+CVS
+\\.dylib
+\\.o
+\\.git

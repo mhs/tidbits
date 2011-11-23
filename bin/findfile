@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+STDOUT.sync=true
+
+
+if ARGV.size == 0
+  puts "Usage: findfile where pattern"
+  puts "findfile -h for help"
+  exit
+elsif ARGV.first =~ /^(-h|--help)$/
+  puts "Usage: findfile where pattern"
+  puts
+  puts "findfile finds all files whose filename matches the"
+  puts "pattern starting in the where directory. It searches"
+  puts "recursively throughout the where directory."
+  puts
+  puts "Options:"
+  puts "  -h, --help shows this help"
+  puts
+  puts "Example:"
+  puts "  Find all files whose name matches the pattern 'rhtml':"
+  puts "    findfile . rhtml"
+  puts
+  puts "Files whose name matches the below patterns will be"
+  puts "ignored:"
+  DATA.each { |pattern| puts "  #{pattern}" }
+  puts
+  puts "findfile is a wrapper to find and grep."
+  puts
+  puts "Author: zach.dennis@gmail.com"
+  exit
+end
+
+
+where = ARGV.shift
+what = '".*(' + ARGV.join( "|" ) + ').*"'
+ignore = DATA.readlines.map{|line| line.chomp}.join("|")
+system "find -E #{where} -iregex #{what} | grep -E -v \"#{ignore}\""
+
+
+__END__
+\\.svn
+\\.log
+\\.project
+CVS
