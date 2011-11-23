@@ -1,8 +1,4 @@
 require File.join(File.dirname(__FILE__), '../../lib/aliasdir/aliases')
-require 'rubygems'
-require 'fileutils'
-require 'rspec'
-require 'rspec/autorun'
 
 Aliases.class_eval do
   remove_const :FILE

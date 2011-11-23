@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+if STDIN.tty?
+  def print_help
+    puts <<-EOT.gsub(/^\s+\|/, '')
+      |Usage: ls | grab <column number>
+      |       grab <column number> < INFILE
+      |
+      |grab outputs a specific column of content from STDIN.
+      |
+      |  column number - the numeric index of the column you want
+      |        to output. This is 1-based Not 0-based.
+      |
+      |Example #1: Grabbing the filename from ls -l
+      |  ls -l | grab 9
+      |
+      |Example #2: Grabbing the list of modified file names in your Git index
+      |  git status | grep modified: | grab 3
+      |
+      |Author: Zach Dennis (zach.dennis@gmail.com, zdennis@mutuallyhuman.com)
+      |        http://www.continuousthinking.com
+      |        http://www.mutuallyhuman.com
+    EOT
+  end
+  
+  if ["-h", "--help"].include?(ARGV.first)
+    print_help
+    exit 0
+  else
+    print_help
+    exit 1
+  end
+else
+  # we are 1-based, so convert to 0-based
+  column = ARGV.shift.to_i - 1
+  puts STDIN.readlines.map{ |line| line.split(/\s+/)[column].to_s }
+end
