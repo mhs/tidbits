@@ -1,3 +1,4 @@
+require 'spec_helper'
 require File.join(File.dirname(__FILE__), '../../lib/aliasdir/aliases')
 
 Aliases.class_eval do
