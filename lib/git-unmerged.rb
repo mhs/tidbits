@@ -145,7 +145,7 @@ class GitUnmerged
       |
       |OPTIONS:
       |  -a   display all unmerged commits (verbose)
-      |  --remote   compare remote branches instead of local branches
+      |  --remote (-r)  compare remote branches instead of local branches
       |  --upstream <branch>   specify a specific upstream branch (defaults to master)
       |  --exclude <branch>[,<branch>,...]   specify a comma-separated list of branches to exclude
       |  --prune  prompts user to delete branches which have no differences with the upstream
@@ -160,7 +160,7 @@ class GitUnmerged
       |  #{$0} --upstream otherbranch
       |
       |EXAMPLE: compare remote branches against origin/master
-      |  #{$0} --remote
+      |  #{$0} --remote (-r)
       |
       |GITCONFIG:
       |  If you name this file git-unmerged and place it somewhere in your PATH
@@ -270,7 +270,7 @@ class GitUnmerged
   private
   
   def extract_options_from_args(args)
-    if args.include?("--remote")
+    if args.include?("--remote") || args.include?("-r")
       @options[:remote] = true
     else
       @options[:local] = true
