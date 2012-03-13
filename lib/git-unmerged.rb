@@ -133,7 +133,7 @@ class GitUnmerged
   
   def print_help
     puts <<-EOT.gsub(/^\s+\|/, '')
-      |Usage: #{$0} [-a] [--upstream <branch>] [--remote]
+      |Usage: #{$0} [-a] [--upstream <branch>] [--remote] [--prune]
       |
       |This script wraps the "git cherry" command. It reports the commits from all local
       |branches which have not been merged into an upstream branch. 
@@ -141,7 +141,7 @@ class GitUnmerged
       |  #{yellow("yellow")} commits have not been merged
       |  #{green("green")} commits have equivalent changes in <upstream> but different SHAs
       |
-      |The default upstream is 'master'. 
+      |The default upstream is 'master' (or 'origin/master' if running with --remote)
       |
       |OPTIONS:
       |  -a   display all unmerged commits (verbose)
@@ -161,6 +161,12 @@ class GitUnmerged
       |
       |EXAMPLE: compare remote branches against origin/master
       |  #{$0} --remote
+      |
+      |EXAMPLE: delete branches without unmerged commits
+      |  #{$0} --prune
+      |
+      |EXAMPLE: delete remote branches without unmerged commits
+      |  #{$0} --remote --prune
       |
       |GITCONFIG:
       |  If you name this file git-unmerged and place it somewhere in your PATH
@@ -231,10 +237,14 @@ class GitUnmerged
     if @branches_to_prune.empty?
       puts "", "There are no branches to prune."
     else
-      puts "", "Are you sure you want to prune the following branches?", ""
+      # Protects Heroku repo's
+      rejected_master_branches = @branches_to_prune.reject!{|branch| branch.branch_name =~ /master/}
+      puts "", "Are you sure you want to prune the following #{@branches_to_prune.size} branches?", ""
+      puts red("(Keep in mind this will remove these branches from the remote repository)") if @remote
       @branches_to_prune.each do |branch|
         puts red(" #{branch.name}")
       end
+      puts "(omitting branches named master)" if rejected_master_branches
       puts
       print "y or n: "
       if STDIN.gets=~/y/i
@@ -242,6 +252,7 @@ class GitUnmerged
           if local?
             `git branch -D #{branch.name}` 
           elsif remote?
+            puts "pruning: #{branch.branch_name} with 'git push #{branch.repository} :#{branch.branch_name}'"
             `git push #{branch.repository} :#{branch.branch_name}`
           end
         end
