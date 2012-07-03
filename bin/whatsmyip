@@ -6,4 +6,4 @@ arr = interfaces.inject( [] ) do |arr,interface|
   arr << "#{interface}: #{md.captures.first}" if md
   arr
 end
-print arr.join( ' ' )
+puts arr.join( ' ' )
