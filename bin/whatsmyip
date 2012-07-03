@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+interfaces = `ifconfig`.scan( /^(\w+)/ ).flatten.delete_if{ |interface| interface =~ /lo/ }
+arr = interfaces.inject( [] ) do |arr,interface|
+  md = `ifconfig #{interface}`.match( /((\d+\.){3}\d+)/ )
+  arr << "#{interface}: #{md.captures.first}" if md
+  arr
+end
+print arr.join( ' ' )
