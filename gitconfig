@@ -22,9 +22,12 @@
 [core]
   editor = emacs
 [alias]
+  amend = commit --amend -C HEAD
   br = branch
+  s  = status
   st = status
   ci = commit
+  co = checkout
   pick = cherry-pick
   
   # +head+ shows the latest commit for the current branch
