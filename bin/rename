@@ -47,7 +47,7 @@ else
 end
 
 
-STDIN.read.each do |line|
+STDIN.readlines.each do |line|
   line.chomp!
   new_name = line.gsub(Regexp.new(args[0]), args[1]) 
   if svn
