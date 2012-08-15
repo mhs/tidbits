@@ -20,7 +20,7 @@
   diff = auto
   status = auto
 [core]
-  editor = emacs
+  editor = vim
 [alias]
   amend = commit --amend -C HEAD
   br = branch
