@@ -20,7 +20,7 @@
   diff = auto
   status = auto
 [core]
-  editor = vim
+  # editor = DO NOT SET THIS IN HERE, LET USERS $EDITOR win
 [alias]
   amend = commit --amend -C HEAD
   br = branch
