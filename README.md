@@ -13,7 +13,7 @@ Enter the following in terminal:
 	git clone git://github.com/mhs/tidbits.git .tidbits
 	./.tidbits/bin/tidbits_update_gitconfig
 
-Then, add the following to your bash profile
+Then, add the following to ~/.bash_profile
 
 	# Include tidbits
 	source ~/.tidbits/mhsrc
