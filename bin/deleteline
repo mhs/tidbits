@@ -1,0 +1,55 @@
+#!/usr/bin/ruby
+
+require 'fileutils'
+
+def bad_format!
+  puts "Expected format: /path/to/file:<lineno> ie: /path/to/foo:303"
+  exit 2
+end
+
+def file_not_found_or_not_readable!(file)
+  puts "#{file} does not exist or is not readable!"
+  exit 3
+end
+
+def file_not_writable!(file)
+  puts "#{file} is not writable!"
+  exit 4
+end
+
+def print_usage
+  puts "Usage: deleteline /path/to/file:<linenumber>"
+  puts
+  puts "deleteline deletes a single line from a specified file and"
+  puts "line number"
+  puts
+  puts "Examples:"
+  puts "   deleteline ~/.ssh/known_hosts:256"
+  puts
+  puts "Author: zach.dennis@gmail.com, zdennis@mutuallyhuman.com"
+end
+
+arg = ARGV.shift
+if arg.nil?
+  print_usage
+  exit 1
+elif %w(-h --help).include?(arg)
+  exit 2
+elsif md=arg.match(/^(.*):(\d+)$/)
+  file, lineno = md.captures[0], md.captures[1].to_i
+  if File.exist?(file) && File.readable?(file)
+    if File.writable?(file)
+      contents = File.readlines(file)
+      File.open(file, "w+") do |io|
+        new_contents = contents[0..lineno-2].concat contents[lineno..-1]
+        io.write new_contents
+      end
+    else
+      file_not_writable!(file)
+    end
+  else
+    file_not_found_or_not_readable!(file)
+  end
+else
+  bad_format!
+end
