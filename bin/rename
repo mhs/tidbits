@@ -22,7 +22,8 @@ elsif ARGV[0] =~ /-h|--help/
   puts "  replacement - the content to replace the pattern with"
   puts
   puts "Options:"
-  puts "  -s,--svn performs an svn mv on the files that are renamed"  
+  puts "  -s,--svn performs an svn mv on the files that are renamed"
+  puts "  -g,--git performs an git mv on the files that are renamed"
   puts
   puts "Examples:"  
   puts "   ls *.rhtml | rename rhtml .html.erb"
@@ -34,7 +35,8 @@ elsif ARGV[0] =~ /-h|--help/
 end
 
 svn = ARGV[0] =~ /^(-s|--svn)$/
-ARGV.shift if svn
+git = ARGV[0] =~ /^(-g|--git)$/
+ARGV.shift if svn || git
 
 # find arguments to pass along if any
 xargs_index = ARGV.index("--")
@@ -50,8 +52,11 @@ end
 STDIN.readlines.each do |line|
   line.chomp!
   new_name = line.gsub(Regexp.new(args[0]), args[1]) 
+  next if line == new_name
   if svn
     %x|svn mv #{xargs.join(" ")} "#{line}" "#{new_name}"|
+  elsif git
+    %x|git mv #{xargs.join(" ")} "#{line}" "#{new_name}"|
   else
     FileUtils.mv(line, new_name)
   end
