@@ -38,6 +38,9 @@
 
   # +cbranch+ returns the current branch you are on
   cbranch = !"git branch | grep '*' | cut -f2 -d' '"
+
+  # +pbranch+ shows the previous branch that you were on.
+  pbranch = !"git reflog | grep 'checkout: moving from' | head -n1 | ruby -e 'puts STDIN.read.scan(/\\\sfrom\\\s(.*)\\\sto\\\s/)'"
   
   # +rbranch+ returns the remote branch for the current branch you are on assuming it
   # is named the same
