@@ -67,6 +67,9 @@
 
   # +pre+ - shortcut for pull --rebase
   pre = pull --rebase
+
+  # +open-url+ opens the home page for this repository
+  open-url = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','')\"`"
   
 [push]
   # default to tracking so git will only try to push the current branch
