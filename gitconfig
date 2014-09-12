@@ -73,7 +73,11 @@
 
   # e.g. - https://github.com/account/repos/pull/new/chore/branch-name-here
   open-pull = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','') + \\\\\"/pull/new/#{%x|git cbranch|}\\\\\"\"`"
-  
+
+  # +add-ignore+ downloads ignore files from Github and adds them to your local
+  # .gitignore
+  add-ignore = !"g(){ url="https://raw.github.com/github/gitignore/master/$1.gitignore" ; curl --output /dev/null --silent --head --fail "$url" ; if [ $? -eq 0 ]; then curl "$url" >> .gitignore && echo "Appended .gitignore with $url" ; else echo "$url doesnt exist." ; fi ; }; g"
+
 [push]
   # default to tracking so git will only try to push the current branch
   # otherwise git push will push all branches which can be problematic if you have
