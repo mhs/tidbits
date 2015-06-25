@@ -11,7 +11,7 @@ Enter the following in terminal:
 
 	cd ~
 	git clone git://github.com/mhs/tidbits.git .tidbits
-	./.tidbits/bin/tidbits_update_gitconfig
+	~/.tidbits/bin/tidbits_update_gitconfig
 
 Then, add the following to ~/.bash_profile
 
