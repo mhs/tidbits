@@ -12,7 +12,7 @@ class Aliases
     end
   
     def []=(the_alias, target)
-      contents = aliases.merge(the_alias => target.gsub(/([\s\!\?])/, '\\\\\1')).to_yaml
+      contents = aliases.merge(the_alias => target.gsub(/([\s\!\?\(\)])/, '\\\\\1')).to_yaml
       File.open(FILE, 'w') do |file|
         file.write contents
       end
