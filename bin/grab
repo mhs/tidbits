@@ -5,6 +5,7 @@ if STDIN.tty?
     puts <<-EOT.gsub(/^\s+\|/, '')
       |Usage: ls | grab <column number>
       |       grab <column number> < INFILE
+      |       grab <column number> <column number2> <column number3> ... < INFILE
       |
       |grab outputs a specific column of content from STDIN.
       |
@@ -17,12 +18,15 @@ if STDIN.tty?
       |Example #2: Grabbing the list of modified file names in your Git index
       |  git status | grep modified: | grab 3
       |
+      |Example #3: Grabbing multiple columns
+      |  ls -l | grab 1 9
+      |
       |Author: Zach Dennis (zach.dennis@gmail.com, zdennis@mutuallyhuman.com)
       |        http://www.continuousthinking.com
       |        http://www.mutuallyhuman.com
     EOT
   end
-  
+
   if ["-h", "--help"].include?(ARGV.first)
     print_help
     exit 0
@@ -32,6 +36,29 @@ if STDIN.tty?
   end
 else
   # we are 1-based, so convert to 0-based
-  column = ARGV.shift.to_i - 1
-  puts STDIN.readlines.map{ |line| line.split(/\s+/)[column].to_s }
+  columns = ARGV.map { |i| i.to_i - 1 }
+
+  arr = STDIN.readlines.map{ |line|
+    columns.map{ |column_index|
+      line.split(/\s+/)[column_index].to_s
+    }
+  }
+
+  maxlengths = []
+
+  columns.each { |column_index|
+    arr.each { |data|
+      length = 0
+      data.each_with_index { |cdata, i|
+        maxlengths[i] = cdata.length if cdata.length > length
+      }
+    }
+  }
+
+  arr.each do |data|
+    data.each_with_index do |cdata, i|
+      printf "%-#{maxlengths[i]}s\t", cdata
+    end
+    puts
+  end
 end
