@@ -79,6 +79,9 @@
   # +open-url+ opens the home page for this repository
   open-url = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','')\"`"
 
+  # +open-branch+ opens the current branch in your default browser
+  open-branch = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','') + \\\\\"/tree/#{%x|git cbranch|}\\\\\"\"`"
+
   # e.g. - https://github.com/account/repos/pull/new/chore/branch-name-here
   open-pull = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','') + \\\\\"/pull/new/#{%x|git cbranch|}\\\\\"\"`"
 
