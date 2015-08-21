@@ -9,7 +9,7 @@
 # POTENTIAL CONFLICTS WITH GIT
 ##############################
 # git-config commands like add/remove are not smart enough to add/remove settings
-# from the proper place in your ~/gitconfig file when using shared configs. You may 
+# from the proper place in your ~/gitconfig file when using shared configs. You may
 # need to add/remove them manually. If you store your ~/.gitconfig file in a git repository
 # itself then it will be extremely easy to see if unexpected changes occurred. For more
 # information on how-to do that contact your local git ninja.
@@ -29,10 +29,10 @@
   ci = commit
   co = checkout
   pick = cherry-pick
-  
+
   # +head+ shows the latest commit for the current branch
   head = log -n1
-  
+
   # +del+ will have run "git rm" on any files you deleted so git knows to delete them to
   del = !"git status | grep deleted | cut -d' ' -f 5 | xargs git rm 2> /dev/null"
 
@@ -41,17 +41,17 @@
 
   # +pbranch+ shows the previous branch that you were on.
   pbranch = !"git reflog | grep 'checkout: moving from' | head -n1 | ruby -e 'puts STDIN.read.scan(/\\\sfrom\\\s(.*)\\\sto\\\s/)'"
-  
+
   # +rbranch+ returns the remote branch for the current branch you are on assuming it
   # is named the same
   rbranch = !"git branch -r | grep -E \"/`git cbranch`$\" | grep -v -e \"->\""
-  
+
   # +review+ shows changes in the remote branch that your current local branch does not have
   review = !"git log `git cbranch`..`git rbranch`"
-  
+
   # +rreview+ shows changes in your local branch that its remote branch does not have
   rreview = !"git log `git rbranch`..`git cbranch`"
-  
+
   # +rollback+ performs a "git reset --soft HEAD~n" where n is a parameter you
   # pass in, ie: git rollback 1 is the same as git reset --soft HEAD~1
   rollback = !"function mhsrc_gitconfig_rollback(){ num=$1 ;git reset --soft HEAD~$num ; echo Rolled back softly $num commits ;} ; mhsrc_gitconfig_rollback "
@@ -61,24 +61,51 @@
 
   # +unmerged+ - see http://mutuallyhuman.com/blog/2009/07/02/finding-unmerged-commits-with-git-unmerged
   unmerged = !"ruby ~/.tidbits/lib/git-unmerged.rb"
-  
+
   # +anim+ - lists branches merged into acceptance that are not in master. (anim == acceptance not in master)
   anim = !"echo 'Branches merged into acceptance that are not in master:' && git log master..acceptance | grep -i 'Merge branch'"
-  
+
   # +pushr+ - pushes the current branch to the remote origin
   pushr = !"git push --set-upstream origin `git cbranch`"
 
   # +pre+ - shortcut for pull --rebase
   pre = pull --rebase
 
+  # +url+ displays the URL for origin
+  url = !"git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','')\""
+
   # +open-url+ opens the home page for this repository
-  open-url = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','')\"`"
+  open-url = !"open `git url"
+
+  # +sha+ displays the current SHA
+  sha = log -n1 --format="%H"
+
+  # +sha-url+ shows the current show url for github
+  sha-url = !"echo `git url`/commit/`git sha`"
+
+  # +open-sha+ opens the current SHA in the browser
+  open-sha = !"open `git sha-url`"
+
+  # +branch-url+
+  branch-url = "echo `git url`/tree/`git cbranch`"
 
   # +open-branch+ opens the current branch in your default browser
-  open-branch = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','') + \\\\\"/tree/#{%x|git cbranch|}\\\\\"\"`"
+  open-branch = !"open `git branch-url`"
+
+  # +pull-url+
+  pull-url = !"echo `git url`/pull/new/`git cbranch`"
 
   # e.g. - https://github.com/account/repos/pull/new/chore/branch-name-here
-  open-pull = !"open `git remote show origin | grep 'Fetch URL' | ruby -e \"puts 'http://' + STDIN.read.scan(/Fetch URL: git@(.*)/).join.sub(':', '/').sub('.git','') + \\\\\"/pull/new/#{%x|git cbranch|}\\\\\"\"`"
+  open-pull = !"open `git pull-url`"
+
+  # +compare-url+ displays the Github compare URL against the current branch. It will
+  # figure out the SHA if you wnat to use Git references like HEAD~2. E.g.
+  #    git compare-url HEAD~2
+  compare-url = !"g(){ echo `git url`/compare/`git log -n1 --format='%H' $1`...`git cbranch`; }; g"
+
+  # +open-compare+ opens a Github compare URL against the current branch. E.g.:
+  #    git compare-url HEAD~2
+  open-compare = !"g(){ open `git compare-url $@`; }; g"
 
   # +add-ignore+ downloads ignore files from Github and adds them to your local
   # .gitignore
