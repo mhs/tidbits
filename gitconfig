@@ -87,7 +87,7 @@
   open-sha = !"open `git sha-url`"
 
   # +branch-url+
-  branch-url = "echo `git url`/tree/`git cbranch`"
+  branch-url = !"echo `git url`/tree/`git cbranch`"
 
   # +open-branch+ opens the current branch in your default browser
   open-branch = !"open `git branch-url`"
